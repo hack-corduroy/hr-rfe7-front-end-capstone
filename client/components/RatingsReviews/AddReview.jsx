@@ -42,7 +42,6 @@ const AddReview = ({ onClose, meta, product, onSubmit }) => {
       api
         .addReview(formData)
         .then(() => {
-          console.log('submitted it to the API');
           setSubmitted(true);
           setTimeout(() => setFading(true), 1000);
           setTimeout(() => onSubmit(formData), 1200);
@@ -55,7 +54,6 @@ const AddReview = ({ onClose, meta, product, onSubmit }) => {
         });
     } else {
       setErrors(currentErrors);
-      console.log('Scrolling to top!!!');
       let el = document.getElementById('addReviewModal');
       el.scrollTop = 0;
     }

@@ -28,7 +28,6 @@ class App extends Component {
   }
 
   addToCart(obj) {
-    console.log('>>>>adding to cart', obj);
     if (!this.state.cart.map((x) => x.style_id).includes(obj.style_id)) {
       this.setState({ cart: [...this.state.cart, obj] });
     }

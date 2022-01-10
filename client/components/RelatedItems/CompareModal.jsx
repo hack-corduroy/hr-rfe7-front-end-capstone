@@ -5,8 +5,6 @@ var CompareModal = ({ related, current }) => {
   let currentFeatures = current ? current.features || [] : [];
   let relatedFeatures = related ? related.features || [] : [];
 
-  console.log(related, current);
-
   let features = [];
 
   currentFeatures.forEach((x) => {

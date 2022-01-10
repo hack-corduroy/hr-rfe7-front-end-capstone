@@ -11,7 +11,6 @@ const ClickHandler = ({ children }) => {
       let element = arr.join('_');
       let time = new Date().toString();
 
-      console.log(`Click Tracked: ${widget} | ${element}`);
       api.logInteraction({ element, widget, time }).catch((err) => console.error(err));
     }
 
