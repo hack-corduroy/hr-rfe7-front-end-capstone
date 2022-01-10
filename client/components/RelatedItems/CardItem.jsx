@@ -12,7 +12,14 @@ var CardItem = (props) => {
   };
 
   const updateCurrentProduct = () => {
-    props.updateCurrent(props.item.id);
+    if (props.updateCurrent) {
+      props.updateCurrent(props.item.id);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      });
+    }
   };
 
   const remove = () => {
