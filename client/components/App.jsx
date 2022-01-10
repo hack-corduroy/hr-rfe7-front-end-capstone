@@ -67,20 +67,32 @@ class App extends Component {
       await this.setState({ loading: true });
     }
 
-    let data = await api.getAllData({ product_id: id });
+    let data = await api.getProductData({ product_id: id });
+    this.setState({ currentProduct: data });
 
-    this.setState({
-      currentProduct: data.currentProduct,
-      relatedProducts: data.relatedProducts,
-      questionData: data.questionData,
-      reviewData: data.reviewData,
-      loading: false,
-    });
+    this.setState({ loading: false });
+
+    data = await api.getRelatedProductData({ product_id: id });
+    this.setState({ relatedProducts: data });
+
+    data = await api.getQuestionData({ product_id: id });
+    this.setState({ questionData: data });
+
+    data = await api.getReviewData({ product_id: id });
+    this.setState({ reviewData: data });
   }
 
   render() {
-    const { products, currentProduct, relatedProducts, reviewData, darkMode, loading, cart } =
-      this.state;
+    const {
+      products,
+      currentProduct,
+      relatedProducts,
+      questionData,
+      reviewData,
+      darkMode,
+      loading,
+      cart,
+    } = this.state;
     return (
       <ThemeProvider theme={THEMES[darkMode ? 'darkMode' : 'default']}>
         <Header
@@ -90,7 +102,7 @@ class App extends Component {
           updateProduct={(id) => this.updateProduct(id)}
           cart={cart}
           removeItemFromCart={(id) =>
-            this.setState({ cart: this.state.cart.filter((x) => x.style_id !== id) })
+            this.setState({ cart: cart.filter((x) => x.style_id !== id) })
           }
         />
         {loading === true && (
@@ -106,20 +118,22 @@ class App extends Component {
               productReviews={reviewData}
               addToCart={(obj) => this.addToCart(obj)}
             />
-            {this.state.relatedProducts && (
+            {relatedProducts && reviewData && (
               <RelatedItems
                 product={currentProduct}
-                related={this.state.relatedProducts}
+                related={relatedProducts}
                 updateProduct={(id) => this.updateProduct(id)}
-                rating={this.state.reviewData}
+                rating={reviewData}
               />
             )}
-            <QuestionsAnswers
-              data={this.state.questionData}
-              product={currentProduct}
-              updateProduct={(id) => this.updateProduct(id)}
-              fetchQuestionData={(params) => this.fetchQuestionData(params)}
-            />
+            {questionData && (
+              <QuestionsAnswers
+                data={questionData}
+                product={currentProduct}
+                updateProduct={(id) => this.updateProduct(id)}
+                fetchQuestionData={(params) => this.fetchQuestionData(params)}
+              />
+            )}
             {reviewData && (
               <RatingsReviews
                 data={reviewData}

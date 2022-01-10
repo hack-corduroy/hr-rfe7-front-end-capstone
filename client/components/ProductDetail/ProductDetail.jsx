@@ -19,8 +19,8 @@ const ProductDetail = ({ product, productReviews, addToCart }) => {
     product.styles.length > 0 ? product.styles[0].photos[0] : null
   );
 
-  let rating = totalRating(productReviews.ratings);
-  let allRatings = productReviews.numReviews;
+  let rating = productReviews ? totalRating(productReviews.ratings) : 0;
+  let allRatings = productReviews ? productReviews.numReviews : 0;
 
   useEffect(() => {
     if (product.styles.length > 0) {
