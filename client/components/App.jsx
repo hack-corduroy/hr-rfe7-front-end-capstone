@@ -10,8 +10,6 @@ import { Header } from './Header/Header';
 import { Loader } from './Shared/Loader';
 import api from '../api';
 
-const backgroundCacher = new Worker(new URL('../worker.js', import.meta.url));
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -46,13 +44,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    backgroundCacher.addEventListener('message', function (e) {
-      console.log('Message from Worker: ' + e.data);
-    });
-
     api.getProducts({ count: 25 }).then((products) => {
       this.setState({ products: products }, () => {
-        backgroundCacher.postMessage(products);
         this.updateProduct(products[0].id);
       });
     });
@@ -109,7 +102,7 @@ class App extends Component {
             <Loader />
           </Container>
         )}
-        {currentProduct && loading === false && (
+        {currentProduct && (
           <Container>
             <ProductDetail
               product={currentProduct}

@@ -48,18 +48,6 @@ const api = {
    * Get All
    ******************************************************************************/
 
-  getAllData: async function (params = {}, useCache = true) {
-    const { product_id } = params;
-
-    let obj = {};
-    obj.currentProduct = await this.getProductData({ product_id });
-    obj.reviewData = await this.getReviewData({ product_id }, useCache);
-    obj.relatedProducts = await this.getRelatedProductData({ product_id });
-    obj.questionData = await this.getQuestionData({ product_id }, useCache);
-
-    return obj;
-  },
-
   isProductCached: async function ({ product_id }) {
     let cachedProduct = await getCache('product', product_id);
     return !!cachedProduct;
@@ -74,10 +62,9 @@ const api = {
   // count	integer	Specifies how many results per page to return. Default 5.
   getProducts: async function (params = {}) {
     const { page = 1, count = 100 } = params;
-    let url = `${host}/products?page=${page}&count=${count}`;
+    let url = 'http://ec2-3-90-239-173.compute-1.amazonaws.com:3000/products';
     try {
       let res = await axios.get(url, headers);
-      await logAPICall();
       return res.data;
     } catch (err) {
       return {};
@@ -86,21 +73,13 @@ const api = {
 
   // Returns data for an individual product, includes style data
   getProductData: async function ({ product_id }) {
-    let productUrl = `${host}/products/${product_id}`;
-    let stylesUrl = `${host}/products/${product_id}/styles`;
+    let productUrl = `http://ec2-3-90-239-173.compute-1.amazonaws.com:3000/products/${product_id}`;
+    let stylesUrl = `http://ec2-3-90-239-173.compute-1.amazonaws.com:3000/products/${product_id}/styles`;
     try {
-      let cachedProduct = await getCache('product', product_id);
-
-      if (cachedProduct) {
-        return cachedProduct;
-      }
       let productRes = await axios.get(productUrl, headers);
-      await logAPICall();
       let obj = productRes.data;
       let stylesRes = await axios.get(stylesUrl, headers);
-      await logAPICall();
       obj.styles = stylesRes.data.results;
-      await cache('product', product_id, obj);
       return obj;
     } catch (err) {
       return {};
@@ -110,17 +89,12 @@ const api = {
   //gets array of related products
   //iterates through and returns product info + ratings info for each
   getRelatedProductData: async function ({ product_id }) {
-    let url = `${host}/products/${product_id}/related`;
+    let url = `http://ec2-3-90-239-173.compute-1.amazonaws.com:3000/products/${product_id}/related`;
 
     try {
       let obj = {};
-      let related = await getCache('related', product_id);
-      if (!related) {
-        let res = await axios.get(url, headers);
-        await logAPICall();
-        await cache('related', product_id, res.data);
-        related = res.data;
-      }
+      let res = await axios.get(url, headers);
+      let related = res.data;
       obj.related_product_ids = related;
       obj.related = [];
       obj.ratings = [];
@@ -131,7 +105,6 @@ const api = {
         obj.related.push(temp1);
         obj.ratings.push(temp2);
       }
-
       return obj;
     } catch (err) {
       return {};
